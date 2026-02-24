@@ -127,14 +127,24 @@ By correctly identifying around 76% of churners, the business can apply targeted
 
 - `src/predict.py` is currently an empty placeholder and can be implemented for single/batch inference.
 
+## Run in Google Colab
+
+This project can be executed directly in Google Colab.
+
+The Colab notebook:
+
+- Clones this GitHub repository
+- Installs dependencies
+- Trains the model
+- Evaluates performance
+- Displays classification metrics and confusion matrix
+
+Repository link used in the notebook:
+
+https://github.com/riddhi0014/customer-churn-ml
+
+Open the notebook and select **Runtime → Run All** to execute the complete pipeline.
+
 ## Conclusion
 
-This repository demonstrates an end-to-end churn prediction workflow:
-
-- Data preprocessing
-- Model training
-- Threshold tuning
-- Evaluation and reporting
-- Reproducible pipeline design
-
-The final solution is interpretable, business-aligned, and ready to extend for production-style inference.
+This project demonstrates a structured, reproducible, and business-aligned machine learning workflow for customer churn prediction, incorporating class balancing, threshold tuning, cross-validation, and modular engineering practices.

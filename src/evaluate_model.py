@@ -9,29 +9,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from data_preprocessing import load_data, preprocess_data
-# # -----------------------------
-# # 1. Load Data
-# # -----------------------------
-# def load_data(path):
-#     df = pd.read_csv(path)
-#     return df
-
-
-# # -----------------------------
-# # 2. Preprocess Data
-# # -----------------------------
-# def preprocess_data(df):
-#     df["TotalCharges"] = pd.to_numeric(df["TotalCharges"], errors="coerce")
-#     df["TotalCharges"] = df["TotalCharges"].fillna(df["TotalCharges"].median())
-
-#     X = df.drop("Churn", axis=1)
-#     y = df["Churn"]
-
-#     X = X.drop("customerID", axis=1)
-#     X = pd.get_dummies(X, drop_first=True)
-#     y = y.map({"No": 0, "Yes": 1})
-
-#     return X, y
 
 
 # -----------------------------
@@ -69,10 +46,27 @@ if __name__ == "__main__":
     print("\nClassification Report:\n")
     print(classification_report(y_test, y_pred))
 
+    # # Confusion Matrix
+    # cm = confusion_matrix(y_test, y_pred)
+
+    # plt.figure(figsize=(5,4))
+    # sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
+    # plt.xlabel("Predicted")
+    # plt.ylabel("Actual")
+    # plt.title("Confusion Matrix")
+    
+    # os.makedirs("results", exist_ok=True)
+    # plt.savefig("results/confusion_matrix.png")
+
+    # print("\nConfusion matrix saved to results/confusion_matrix.png")
+
+
+    from sklearn.metrics import roc_curve, precision_recall_curve
+    
     # Confusion Matrix
     cm = confusion_matrix(y_test, y_pred)
-
-    plt.figure(figsize=(5,4))
+    
+    plt.figure(figsize=(5, 4))
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
     plt.xlabel("Predicted")
     plt.ylabel("Actual")
@@ -80,5 +74,27 @@ if __name__ == "__main__":
     
     os.makedirs("results", exist_ok=True)
     plt.savefig("results/confusion_matrix.png")
-
     print("\nConfusion matrix saved to results/confusion_matrix.png")
+    
+    # ROC Curve
+    fpr, tpr, roc_thresholds = roc_curve(y_test, y_prob)
+    plt.figure(figsize=(6, 6))
+    plt.plot(fpr, tpr, label="ROC Curve (AUC = {:.2f})".format(roc_auc_score(y_test, y_prob)))
+    plt.plot([0, 1], [0, 1], linestyle="--", color="gray", label="Random Guess")
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title("ROC Curve")
+    plt.legend()
+    plt.savefig("results/roc_curve.png")
+    print("\nROC curve saved to results/roc_curve.png")
+    
+    # Precision-Recall Curve
+    precision, recall, pr_thresholds = precision_recall_curve(y_test, y_prob)
+    plt.figure(figsize=(6, 6))
+    plt.plot(recall, precision, label="Precision-Recall Curve")
+    plt.xlabel("Recall")
+    plt.ylabel("Precision")
+    plt.title("Precision-Recall Curve")
+    plt.legend()
+    plt.savefig("results/precision_recall_curve.png")
+    print("\nPrecision-Recall curve saved to results/precision_recall_curve.png")

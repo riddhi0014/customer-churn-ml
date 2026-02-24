@@ -1,150 +1,140 @@
-📌 Customer Churn Prediction – Machine Learning Project
-📖 Project Overview
+# Customer Churn Prediction (Machine Learning)
 
-This project builds a classification-based machine learning model to predict customer churn in a telecommunications company. The goal is to identify customers who are likely to discontinue their subscription so that the company can take proactive retention actions.
+## Project Overview
 
-The model uses customer demographic information, service usage patterns, billing details, and subscription history to estimate the probability of churn.
+This project builds a binary classification model to predict customer churn in a telecommunications business.
+The objective is to identify customers who are likely to leave so the business can take proactive retention actions.
 
-🎯 Problem Statement
+The model uses customer demographics, service usage, account details, and billing information to estimate churn probability.
 
-Customer churn leads to significant revenue loss in subscription-based businesses. Accurately identifying customers at risk of churning allows companies to implement targeted retention strategies such as personalized offers or service improvements.
+## Problem Statement
 
-The objective of this project is to:
+Customer churn creates significant revenue loss in subscription-based businesses.
+By identifying high-risk customers early, teams can apply targeted interventions such as personalized offers or service improvements.
 
-Build a classification model to predict churn (Yes/No)
+Project goals:
 
-Evaluate model performance using appropriate metrics
+- Build a model to predict churn (`Yes` / `No`)
+- Evaluate performance with classification metrics
+- Prioritize churner detection (high recall)
+- Align predictions with business cost trade-offs
 
-Optimize the model to prioritize identifying churners (high recall)
+## Dataset
 
-Align predictions with business cost considerations
+Source: Telco Customer Churn dataset (`data/telco_churn.csv`)
 
-📊 Dataset
+Features include:
 
-The project uses the Telco Customer Churn Dataset, which includes:
+- Customer demographics (`gender`, `SeniorCitizen`, `Dependents`, etc.)
+- Account details (`tenure`, `Contract`, `PaymentMethod`)
+- Subscribed services (`InternetService`, `StreamingTV`, `OnlineSecurity`, etc.)
+- Billing information (`MonthlyCharges`, `TotalCharges`)
+- Target variable: `Churn` (`Yes` / `No`)
 
-Customer demographics (gender, senior citizen, dependents, etc.)
+## Data Preprocessing
 
-Account details (tenure, contract type, payment method)
+Preprocessing is centralized in `src/data_preprocessing.py` to keep training and evaluation consistent.
 
-Services subscribed (Internet, Streaming, Security, etc.)
+Steps:
 
-Billing information (MonthlyCharges, TotalCharges)
+- Convert `TotalCharges` to numeric and impute missing values with median
+- Remove non-informative identifier (`customerID`)
+- Apply one-hot encoding to categorical features (`drop_first=True`)
+- Encode target: `No -> 0`, `Yes -> 1`
 
-Target variable: Churn (Yes/No)
+## Model Selection
 
-⚙️ Data Preprocessing
+Models evaluated:
 
-The following preprocessing steps were applied:
+- Logistic Regression
+- Gradient Boosting
 
-Converted TotalCharges to numeric and handled missing values using median imputation
+Both achieved similar ROC-AUC (~0.845).
+Logistic Regression was selected because it provides comparable performance, simpler interpretation, and stable optimization.
 
-Removed non-informative features (customerID)
+Class imbalance handling:
 
-Applied one-hot encoding to categorical variables
+- `class_weight="balanced"`
 
-Encoded target variable (Churn: Yes → 1, No → 0)
+## Threshold Tuning
 
-To avoid data leakage and ensure reproducibility, preprocessing was centralized in a shared module.
+Instead of using the default threshold (`0.50`), prediction threshold was tuned to `0.55` to improve F1-score while maintaining high recall for churners.
 
-🤖 Model Selection
+This supports the business goal that missing a true churner is more costly than a false positive.
 
-Several models were evaluated, including:
+## Final Model Performance
 
-Logistic Regression
+Test set results:
 
-Gradient Boosting
+- Accuracy: `75.4%`
+- Recall (Churn): `76%`
+- Precision (Churn): `53%`
+- F1-score (Churn): `0.62`
+- ROC-AUC: `0.84`
+- Cross-validated AUC: `0.845`
 
-Both models achieved similar ROC-AUC scores (~0.845). Logistic Regression was selected due to:
+## Project Structure
 
-Comparable performance
-
-Simpler and interpretable structure
-
-Convex optimization with guaranteed global minimum
-
-Easier business interpretability
-
-Class imbalance was handled using:
-
-class_weight="balanced"
-🎚 Threshold Tuning
-
-Instead of using the default classification threshold (0.5), the decision threshold was tuned to 0.55 to optimize F1-score while maintaining high recall for churn customers.
-
-This approach aligns with business priorities, where missing a churner is more costly than incorrectly flagging a non-churner.
-
-📈 Final Model Performance
-
-On the test dataset:
-
-Accuracy: 75.4%
-
-Recall (Churn): 76%
-
-Precision (Churn): 53%
-
-F1-score (Churn): 0.62
-
-ROC-AUC: 0.84
-
-Cross-validated AUC: 0.845
-
-The model demonstrates strong discriminatory power and effectively identifies high-risk customers.
-
-📁 Project Structure
-customer_churn_project/
-│
-├── data/                   # Dataset
-├── models/                 # Saved trained model
-├── notebooks/              # Exploratory analysis
-├── results/                # Confusion matrix image
+```text
+customer-churn-ml-aiproject/
+├── data/
+│   └── telco_churn.csv
+├── models/
+├── notebooks/
+│   └── churn_analysis.ipynb
+├── results/
 ├── src/
-│   ├── train_model.py
+│   ├── data_preprocessing.py
 │   ├── evaluate_model.py
-│   └── data_preprocessing.py
+│   ├── predict.py
+│   └── train_model.py
 └── README.md
-🚀 How to Run the Project
-1️⃣ Train the Model
+```
+
+## How to Run
+
+From the project root:
+
+1. Train the model
+
+```bash
 python src/train_model.py
+```
 
 This will:
 
-Load and preprocess data
+- Load and preprocess the data
+- Train the Logistic Regression pipeline
+- Save the model bundle to `models/churn_model.pkl` (includes model + threshold)
 
-Train the Logistic Regression model
+2. Evaluate the model
 
-Save the trained model to models/churn_model.pkl
-
-2️⃣ Evaluate the Model
+```bash
 python src/evaluate_model.py
+```
 
 This will:
 
-Print evaluation metrics
+- Print accuracy, ROC-AUC, and classification report
+- Generate and save confusion matrix at `results/confusion_matrix.png`
 
-Display classification report
+## Business Insight
 
-Save confusion matrix to results/confusion_matrix.png
+The model is tuned for strong churner identification (high recall).
+By correctly identifying around 76% of churners, the business can apply targeted retention actions and reduce potential revenue loss.
 
-🧠 Business Insight
+## Notes
 
-The model prioritizes identifying customers at risk of churn by optimizing recall. By correctly identifying approximately 76% of churners, the company can significantly reduce revenue loss through proactive retention strategies.
+- `src/predict.py` is currently an empty placeholder and can be implemented for single/batch inference.
 
-📌 Conclusion
+## Conclusion
 
-This project demonstrates a complete machine learning workflow:
+This repository demonstrates an end-to-end churn prediction workflow:
 
-Data preprocessing
+- Data preprocessing
+- Model training
+- Threshold tuning
+- Evaluation and reporting
+- Reproducible pipeline design
 
-Model training
-
-Threshold tuning
-
-Cross-validation
-
-Performance evaluation
-
-Reproducible pipeline design
-
-The final model is interpretable, business-aligned, and suitable for deployment in churn prediction systems.
+The final solution is interpretable, business-aligned, and ready to extend for production-style inference.

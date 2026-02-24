@@ -145,7 +145,7 @@ https://github.com/riddhi0014/customer-churn-ml
 
 Google Colab notebook link:
 
-https://colab.research.google.com/drive/13b7UEL8m31v9AeGKW1ctmfJZlMmo2_9_
+https://colab.research.google.com/drive/13b7UEL8m31v9AeGKW1ctmfJZlMmo2_9_?usp=sharing
 
 Open the notebook and select **Runtime → Run All** to execute the complete pipeline.
 
